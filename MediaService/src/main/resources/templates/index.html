@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .main { max-width: 800px; margin: 0 auto; }
+        form { margin-bottom: 40px; }
+        input, button { padding: 8px; margin-top: 5px; display: block; }
+        .media { display: flex; flex-wrap: wrap; gap: 20px; }
+        .media-card { border: 1px solid #ccc; padding: 10px; width: 180px; text-align: center; }
+        .media-card img { max-width: 100%; height: auto; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <main class="main">
+        <h2>Upload Movie</h2>
+
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <option value="MOVIE">Фильм</option>
+                <option value="SERIES">Сериал</option>
+                <option value="ANIME">Аниме</option>
+                <option value="CARTOON">Мультик</option>
+                <option value="TV_SHOW">ТВ Шоу</option>
+            </select>
+
+            <label for="genre">Genres:</label>
+            <select id="genre" name="genre" multiple required>
+                <option value="ACTION">Экшн</option>
+                <option value="DRAMA">Драма</option>
+                <option value="COMEDY">Комедия</option>
+                <option value="HORROR">Хоррор</option>
+                <option value="SCI_FI">Sci-Fi</option>
+                <option value="ROMANCE">Романтика</option>
+                <option value="THRILLER">Триллер</option>
+                <option value="FANTASY">Фантастика</option>
+            </select>
+
+            <label for="file">Image:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+
+            <button type="submit">Upload Movie</button>
+        </form>
+
+        <h2>All Movies</h2>
+        <div class="media" id="moviesContainer">
+        </div>
+    </main>
+<script src="../static/script.js"></script>
+</body>
+</html>
