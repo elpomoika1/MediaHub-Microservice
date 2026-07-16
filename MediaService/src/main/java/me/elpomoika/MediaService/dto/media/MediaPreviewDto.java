@@ -12,5 +12,4 @@ public class MediaPreviewDto {
     private String title;
     private String imageUrl;
     private double rating;
-    private double votes;
 }

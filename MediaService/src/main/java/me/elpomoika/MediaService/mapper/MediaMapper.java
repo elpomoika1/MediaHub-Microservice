@@ -13,7 +13,6 @@ public class MediaMapper {
                 .title(media.getTitle())
                 .imageUrl(media.getImageUrl())
                 .rating(ArithmeticMeanCalculator.calculateAverage(media.getRating()))
-                .votes(ArithmeticMeanCalculator.calculateAverage(media.getVotes()))
                 .build();
     }
 }

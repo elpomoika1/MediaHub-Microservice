@@ -13,19 +13,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
+    // Do user need role to perform this action
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/api/media/list").permitAll()
-                                .requestMatchers("/api/media/**").authenticated())
+                                .requestMatchers("/api/media/**").permitAll()
+                                .requestMatchers("/api/media/*/rate").authenticated()
+                                .requestMatchers("/api/media/*/comment").authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

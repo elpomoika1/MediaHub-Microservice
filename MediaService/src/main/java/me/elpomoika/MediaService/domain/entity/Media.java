@@ -36,6 +36,6 @@ public class Media {
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
     private final List<Rating> rating = new ArrayList<>();
 
-    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
-    private final List<Votes> votes = new ArrayList<>();
+    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Comment> comments = new ArrayList<>();
 }

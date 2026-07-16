@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.MediaService.domain.entity.Media;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
+import me.elpomoika.MediaService.dto.media.CommentRequest;
 import me.elpomoika.MediaService.dto.media.MediaPreviewDto;
 import me.elpomoika.MediaService.dto.media.MediaRequestDto;
+import me.elpomoika.MediaService.dto.media.RatingRequest;
 import me.elpomoika.MediaService.mapper.MediaMapper;
 import me.elpomoika.MediaService.service.MediaService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,12 +92,19 @@ public class MediaController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping("/{name}/rate")
-    public ResponseEntity<?> rateMedia(@PathVariable String mediaName,
-                                       @RequestParam Double rating,
-                                       Authentication authentication) {
-        UUID userId = UUID.fromString(authentication.getName());
-        mediaService.rateMedia(userId, mediaName, rating);
+    @PreAuthorize("hasRole('MEMBER')")
+    @PostMapping("/{name}/ratings")
+    public ResponseEntity<?> rateMedia(@PathVariable String name, @RequestBody RatingRequest request) {
+        mediaService.rateMedia(name, request);
         return ResponseEntity.ok("rated");
+    }
+
+    @PreAuthorize("hasRole('MEMBER')")
+    @PostMapping("/{name}/comment")
+    public ResponseEntity<?> commentMedia(@PathVariable String name, @RequestBody CommentRequest request, Authentication authentication) {
+        UUID authorId = UUID.fromString(authentication.getName());
+        mediaService.leaveComment(authorId, name, request);
+
+        return ResponseEntity.ok("commented");
     }
 }
