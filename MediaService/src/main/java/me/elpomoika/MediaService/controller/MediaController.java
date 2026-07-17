@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.MediaService.domain.entity.Media;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
+import me.elpomoika.MediaService.dto.comment.CommentVoteRequest;
 import me.elpomoika.MediaService.dto.media.CommentRequest;
 import me.elpomoika.MediaService.dto.media.MediaPreviewDto;
 import me.elpomoika.MediaService.dto.media.MediaRequestDto;
 import me.elpomoika.MediaService.dto.media.RatingRequest;
 import me.elpomoika.MediaService.mapper.MediaMapper;
+import me.elpomoika.MediaService.service.CommentService;
 import me.elpomoika.MediaService.service.MediaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MediaController {
     private final MediaService mediaService;
+    private final CommentService commentService;
     private final MediaMapper mediaMapper;
 
     @PostMapping("/upload")
@@ -103,8 +106,17 @@ public class MediaController {
     @PostMapping("/{name}/comment")
     public ResponseEntity<?> commentMedia(@PathVariable String name, @RequestBody CommentRequest request, Authentication authentication) {
         UUID authorId = UUID.fromString(authentication.getName());
-        mediaService.leaveComment(authorId, name, request);
+        commentService.leaveComment(authorId, name, request);
 
         return ResponseEntity.ok("commented");
+    }
+
+    @PreAuthorize("hasRole('MEMBER')")
+    @PutMapping("/comments/{commentId}/vote")
+    public ResponseEntity<?> vote(@PathVariable Long commentId, @RequestBody CommentVoteRequest request, Authentication authentication) {
+        UUID userId = UUID.fromString(authentication.getName());
+        commentService.rate(userId, commentId, request.type());
+
+        return ResponseEntity.ok().build();
     }
 }

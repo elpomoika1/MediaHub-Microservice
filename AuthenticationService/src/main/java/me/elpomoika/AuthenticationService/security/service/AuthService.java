@@ -26,7 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto changeEmail(ChangeEmailRequest request, UUID userId) {
-        User user = userRepository.findByUuid(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow();
 
         user.setEmail(request.email());
@@ -35,7 +35,7 @@ public class AuthService {
     }
 
     public UserDto changePassword(ChangePasswordRequest request, UUID userId) {
-        User user = userRepository.findByUuid(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow();
 
         user.setPassword(request.password());

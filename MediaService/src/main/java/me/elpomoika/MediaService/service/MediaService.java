@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MediaService {
     private final MediaRepository mediaRepository;
-    private final CommentRepository commentRepository;
     private final S3FileStorageService s3StorageService;
 
     public void saveMovie(MultipartFile file, MediaRequestDto request) throws IOException {
@@ -59,20 +59,6 @@ public class MediaService {
 
         media.getRating().add(rating);
         mediaRepository.save(media);
-    }
-
-    public void leaveComment(UUID authorId, String mediaName, CommentRequest request) {
-        Media media = mediaRepository.findByName(mediaName);
-        if (media == null) return;
-
-        Comment comment = Comment.builder()
-                .commentText(request.commentText())
-                .timestamp(request.timestamp())
-                .media(media)
-                .authorId(authorId)
-                .build();
-
-        commentRepository.save(comment);
     }
 
     public Media getRandomMovie() {
