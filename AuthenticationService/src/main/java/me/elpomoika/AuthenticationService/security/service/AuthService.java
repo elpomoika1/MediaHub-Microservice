@@ -31,7 +31,12 @@ public class AuthService {
 
         user.setEmail(request.email());
 
-        return new UserDto(user.getEmail());
+        userRepository.save(user);
+
+        return UserDto.builder()
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .build();
     }
 
     public UserDto changePassword(ChangePasswordRequest request, UUID userId) {
@@ -40,7 +45,12 @@ public class AuthService {
 
         user.setPassword(request.password());
 
-        return new UserDto(user.getEmail());
+        userRepository.save(user);
+
+        return UserDto.builder()
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .build();
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -68,13 +78,14 @@ public class AuthService {
         User user = new User();
 
         user.setEmail(request.getEmail());
-        user.setPassword(
-                passwordEncoder.encode(request.getPassword())
-        );
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User saved = userRepository.save(user);
 
-        return new UserDto(saved.getEmail());
+        return UserDto.builder()
+                .email(saved.getEmail())
+                .login(saved.getLogin())
+                .build();
     }
 
     public AuthResponse refresh(RefreshRequest request) {

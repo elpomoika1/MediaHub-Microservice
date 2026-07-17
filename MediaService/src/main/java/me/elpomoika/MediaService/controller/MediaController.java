@@ -112,6 +112,15 @@ public class MediaController {
     }
 
     @PreAuthorize("hasRole('MEMBER')")
+    @PatchMapping("/{name}/comment")
+    public ResponseEntity<?> editComment(@PathVariable String name, @RequestBody CommentRequest request, Authentication authentication) {
+        UUID authorId = UUID.fromString(authentication.getName());
+        commentService.leaveComment(authorId, name, request);
+
+        return ResponseEntity.ok("commented");
+    }
+
+    @PreAuthorize("hasRole('MEMBER')")
     @PutMapping("/comments/{commentId}/vote")
     public ResponseEntity<?> vote(@PathVariable Long commentId, @RequestBody CommentVoteRequest request, Authentication authentication) {
         UUID userId = UUID.fromString(authentication.getName());
