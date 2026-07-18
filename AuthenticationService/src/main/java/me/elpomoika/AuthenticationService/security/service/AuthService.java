@@ -1,19 +1,26 @@
 package me.elpomoika.AuthenticationService.security.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.elpomoika.AuthenticationService.domain.entity.OutboxEvent;
 import me.elpomoika.AuthenticationService.domain.entity.RefreshToken;
 import me.elpomoika.AuthenticationService.domain.entity.User;
-import me.elpomoika.AuthenticationService.dto.auth.*;
 import me.elpomoika.AuthenticationService.dto.RefreshRequest;
 import me.elpomoika.AuthenticationService.dto.UserDto;
+import me.elpomoika.AuthenticationService.dto.auth.*;
+import me.elpomoika.AuthenticationService.event.UserRegisteredEvent;
+import me.elpomoika.AuthenticationService.outbox.OutboxStatus;
+import me.elpomoika.AuthenticationService.repository.OutboxEventRepository;
 import me.elpomoika.AuthenticationService.repository.UserRepository;
 import me.elpomoika.AuthenticationService.security.jwt.JwtService;
 import me.elpomoika.AuthenticationService.security.jwt.RefreshTokenService;
+import me.elpomoika.AuthenticationService.util.JsonParser;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -24,6 +31,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final OutboxEventRepository outboxRepository;
+    private final JsonParser jsonParser;
 
     public UserDto changeEmail(ChangeEmailRequest request, UUID userId) {
         User user = userRepository.findById(userId)
@@ -70,17 +79,19 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken.getToken());
     }
 
+    @Transactional
     public UserDto register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
 
         User user = new User();
-
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User saved = userRepository.save(user);
+
+        enqueueEvent(saved, Instant.now());
 
         return UserDto.builder()
                 .email(saved.getEmail())
@@ -95,5 +106,26 @@ public class AuthService {
         String newAccessToken = jwtService.generateToken(user);
 
         return new AuthResponse(newAccessToken, stored.getToken());
+    }
+
+    private void enqueueEvent(User user, Instant now) {
+        UserRegisteredEvent payload = UserRegisteredEvent.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .build();
+
+        OutboxEvent outboxEvent = OutboxEvent.builder()
+                .aggregateId(user.getId().toString())
+                .eventType("user.registred")
+                .payload(jsonParser.toJson(payload))
+                .retryCount(0)
+                .availableAt(now)
+                .updatedAt(now)
+                .createdAt(now)
+                .status(OutboxStatus.NEW)
+                .build();
+
+        outboxRepository.save(outboxEvent);
     }
 }
