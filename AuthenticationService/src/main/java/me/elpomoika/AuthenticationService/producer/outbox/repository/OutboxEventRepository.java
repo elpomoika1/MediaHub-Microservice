@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.repository;
+package me.elpomoika.AuthenticationService.producer.outbox.repository;
 
 import me.elpomoika.AuthenticationService.domain.entity.OutboxEvent;
 import org.springframework.data.jpa.repository.JpaRepository;

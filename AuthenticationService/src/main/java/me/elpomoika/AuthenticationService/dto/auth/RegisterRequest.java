@@ -2,11 +2,13 @@ package me.elpomoika.AuthenticationService.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Value;
 
 @Data
 @AllArgsConstructor
+@Value
 public class RegisterRequest {
-    private String login;
-    private String email;
-    private String password;
+    String login;
+    String email;
+    String password;
 }

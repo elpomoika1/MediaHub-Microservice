@@ -1,10 +1,11 @@
-package me.elpomoika.AuthenticationService.outbox;
+package me.elpomoika.AuthenticationService.producer.outbox;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.elpomoika.AuthenticationService.domain.entity.OutboxEvent;
-import me.elpomoika.AuthenticationService.repository.OutboxEventRepository;
+import me.elpomoika.AuthenticationService.domain.enums.OutboxStatus;
+import me.elpomoika.AuthenticationService.producer.outbox.repository.OutboxEventRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

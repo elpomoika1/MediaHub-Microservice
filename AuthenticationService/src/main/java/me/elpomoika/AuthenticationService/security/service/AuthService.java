@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.AuthenticationService.domain.entity.OutboxEvent;
 import me.elpomoika.AuthenticationService.domain.entity.RefreshToken;
 import me.elpomoika.AuthenticationService.domain.entity.User;
+import me.elpomoika.AuthenticationService.domain.enums.Role;
 import me.elpomoika.AuthenticationService.dto.RefreshRequest;
 import me.elpomoika.AuthenticationService.dto.UserDto;
 import me.elpomoika.AuthenticationService.dto.auth.*;
-import me.elpomoika.AuthenticationService.event.UserRegisteredEvent;
-import me.elpomoika.AuthenticationService.outbox.OutboxStatus;
-import me.elpomoika.AuthenticationService.repository.OutboxEventRepository;
+import me.elpomoika.AuthenticationService.producer.event.UserRegisteredEvent;
+import me.elpomoika.AuthenticationService.domain.enums.OutboxStatus;
+import me.elpomoika.AuthenticationService.producer.outbox.repository.OutboxEventRepository;
 import me.elpomoika.AuthenticationService.repository.UserRepository;
 import me.elpomoika.AuthenticationService.security.jwt.JwtService;
 import me.elpomoika.AuthenticationService.security.jwt.RefreshTokenService;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -86,6 +88,8 @@ public class AuthService {
         }
 
         User user = new User();
+        user.setRoles(Collections.singleton(Role.MEMBER));
+        user.setLogin(request.getLogin());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -117,7 +121,7 @@ public class AuthService {
 
         OutboxEvent outboxEvent = OutboxEvent.builder()
                 .aggregateId(user.getId().toString())
-                .eventType("user.registred")
+                .eventType("user.registered")
                 .payload(jsonParser.toJson(payload))
                 .retryCount(0)
                 .availableAt(now)

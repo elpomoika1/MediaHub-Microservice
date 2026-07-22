@@ -1,12 +1,14 @@
-package me.elpomoika.AuthenticationService.event;
+package me.elpomoika.AuthenticationService.producer.event;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.UUID;
 
 @Value
 @Builder
+@Jacksonized
 public class UserRegisteredEvent {
     UUID userId;
     String email;

@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.outbox;
+package me.elpomoika.AuthenticationService.domain.enums;
 
 public enum OutboxStatus {
     NEW,
