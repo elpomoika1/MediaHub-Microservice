@@ -1,7 +1,10 @@
 package me.elpomoika.UserService.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.elpomoika.UserService.dto.DescriptionRequest;
 import me.elpomoika.UserService.dto.ProfileResponse;
+import me.elpomoika.UserService.dto.UsernameRequest;
 import me.elpomoika.UserService.service.ProfileService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @RestController("/api/user")
@@ -21,10 +22,10 @@ public class UserController {
 
     @PostMapping("/nickname")
     @PreAuthorize("hasRole('MEMBER')")
-    public void handleNickname(@RequestBody String nickname, Authentication authentication) {
+    public void handleNickname(@Valid @RequestBody UsernameRequest request, Authentication authentication) {
         UUID userId = UUID.fromString(authentication.getName());
 
-        profileService.setNickname(nickname, userId);
+        profileService.setNickname(request, userId);
     }
 
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -37,10 +38,10 @@ public class UserController {
 
     @PostMapping("/description")
     @PreAuthorize("hasRole('MEMBER')")
-    public void handleDescription(String description, Authentication authentication) {
+    public void handleDescription(@Valid @RequestBody DescriptionRequest request, Authentication authentication) {
         UUID userId = UUID.fromString(authentication.getName());
 
-
+        profileService.setDescription(request, userId);
     }
 
     @GetMapping("/profile")

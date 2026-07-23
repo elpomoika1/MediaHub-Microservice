@@ -1,4 +1,4 @@
-package me.elpomoika.UserService.exception;
+package me.elpomoika.UserService.exception.file;
 
 public class FileTooLargeException extends RuntimeException {
     public FileTooLargeException(String message) {

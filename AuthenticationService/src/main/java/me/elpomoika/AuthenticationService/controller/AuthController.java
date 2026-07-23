@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.AuthenticationService.dto.RefreshRequest;
 import me.elpomoika.AuthenticationService.dto.UserDto;
 import me.elpomoika.AuthenticationService.dto.auth.*;
-import me.elpomoika.AuthenticationService.security.service.AuthService;
+import me.elpomoika.AuthenticationService.service.AuthService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

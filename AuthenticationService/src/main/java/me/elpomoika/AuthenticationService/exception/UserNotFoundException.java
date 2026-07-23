@@ -1,4 +1,4 @@
-package me.elpomoika.UserService.exception;
+package me.elpomoika.AuthenticationService.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

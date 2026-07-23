@@ -18,13 +18,13 @@ public class KafkaOutboxPublisher implements OutboxPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${kafka.topic.register}")
-    private String registerTopic;
+    @Value("${kafka.outbox.topic}")
+    private String outboxTopic;
 
     @Override
     public void publish(OutboxEvent event) {
         ProducerRecord<String, String> record = new ProducerRecord<>(
-                registerTopic,
+                outboxTopic,
                 null,
                 event.getAggregateId(),
                 event.getPayload()
@@ -32,6 +32,5 @@ public class KafkaOutboxPublisher implements OutboxPublisher {
         record.headers().add("eventType", event.getEventType().getBytes(StandardCharsets.UTF_8));
 
         kafkaTemplate.send(record);
-        LOGGER.info("success send to kafka {}, {}, {}", registerTopic, event.getAggregateId(), event.getPayload());
     }
 }
