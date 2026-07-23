@@ -1,6 +1,7 @@
 package me.elpomoika.UserService.service;
 
 import lombok.RequiredArgsConstructor;
+import me.elpomoika.UserService.consumer.event.UserChangeEmailEvent;
 import me.elpomoika.UserService.consumer.event.UserRegisteredEvent;
 import me.elpomoika.UserService.domain.entity.UserProfile;
 import me.elpomoika.UserService.dto.DescriptionRequest;
@@ -72,6 +73,13 @@ public class ProfileService {
         } catch (IOException e) {
             throw new FileProcessingException("Failed to read uploaded file", e);
         }
+    }
+
+    public void changeEmail(UserChangeEmailEvent event) {
+        UserProfile profile = getProfileById(event.userId());
+
+        profile.setEmail(event.newEmail());
+        profileRepository.save(profile);
     }
 
     public ProfileResponse getProfile(UUID userId) {

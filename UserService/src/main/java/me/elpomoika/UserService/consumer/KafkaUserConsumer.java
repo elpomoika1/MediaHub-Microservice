@@ -1,6 +1,7 @@
 package me.elpomoika.UserService.consumer;
 
 import lombok.RequiredArgsConstructor;
+import me.elpomoika.UserService.consumer.event.UserChangeEmailEvent;
 import me.elpomoika.UserService.consumer.event.UserRegisteredEvent;
 import me.elpomoika.UserService.service.ProfileService;
 import me.elpomoika.UserService.util.JsonParser;
@@ -26,12 +27,15 @@ public class KafkaUserConsumer {
         String eventType = extractEventType(record);
 
         switch (eventType) {
-            case "user.registered":
+            case "user.registered" -> {
                 UserRegisteredEvent registeredEvent = jsonParser.fromJson(record.value(), UserRegisteredEvent.class);
                 profileService.createProfile(registeredEvent);
-                break;
-            default:
-                LOGGER.warn("Неизвестный тип события: {}", eventType);
+            }
+            case "user.change.email" -> {
+                UserChangeEmailEvent changeEmailEvent = jsonParser.fromJson(record.value(), UserChangeEmailEvent.class);
+                profileService.changeEmail(changeEmailEvent);
+            }
+            default -> LOGGER.warn("Unknown event type: {}", eventType);
         }
     }
 
