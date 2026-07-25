@@ -1,13 +1,15 @@
 package me.elpomoika.MediaService.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -22,9 +24,9 @@ public class Rating {
     private Long id;
 
     @Min(1) @Max(10)
-    private double value;
+    private int value;
 
-//  todo  private Long userId;
+    private UUID userId;
 
     @ManyToOne
     private Media media;

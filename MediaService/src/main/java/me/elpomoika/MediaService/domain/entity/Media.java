@@ -23,6 +23,8 @@ public class Media {
     @FullTextField(name = "title")
     private String title;
 
+    private int episodesCount;
+
     @Enumerated(EnumType.STRING)
     private MediaType type;
 
@@ -32,6 +34,11 @@ public class Media {
 
     @Column(length = 2048)
     private String imageUrl;
+
+    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("number ASC")
+    @Builder.Default
+    private List<Episode> episodes = new ArrayList<>();
 
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
     private final List<Rating> rating = new ArrayList<>();

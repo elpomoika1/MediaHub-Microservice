@@ -1,13 +1,12 @@
 package me.elpomoika.MediaService.controller;
 
 import lombok.RequiredArgsConstructor;
-import me.elpomoika.MediaService.domain.entity.Media;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
 import me.elpomoika.MediaService.dto.comment.CommentVoteRequest;
 import me.elpomoika.MediaService.dto.media.CommentRequest;
-import me.elpomoika.MediaService.dto.media.MediaPreviewDto;
-import me.elpomoika.MediaService.dto.media.MediaRequestDto;
+import me.elpomoika.MediaService.dto.media.MediaPreviewResponse;
+import me.elpomoika.MediaService.dto.media.MediaRequest;
 import me.elpomoika.MediaService.dto.media.RatingRequest;
 import me.elpomoika.MediaService.mapper.MediaMapper;
 import me.elpomoika.MediaService.service.CommentService;
@@ -23,7 +22,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/media")
@@ -36,15 +34,16 @@ public class MediaController {
     @PostMapping("/upload")
     public ResponseEntity<?> upload(
             @RequestPart("file") MultipartFile file,
-            @RequestPart("data") MediaRequestDto request) throws IOException {
+            @RequestPart("data") MediaRequest request) throws IOException {
         mediaService.saveMovie(file, request);
         return ResponseEntity.ok("Uploaded");
     }
 
     @GetMapping("/find")
-    public ResponseEntity<MediaPreviewDto> getMedia(@RequestParam String name) {
+    public ResponseEntity<MediaPreviewResponse> getMedia(@RequestParam String name, Authentication authentication) {
+        UUID userId = authentication != null ? UUID.fromString(authentication.getName()) : null;
         return ResponseEntity.ok(
-                mediaMapper.toDto(mediaService.getMediaBySlug(name))
+                mediaService.getMediaBySlug(name, userId)
         );
     }
 
@@ -54,51 +53,33 @@ public class MediaController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<MediaPreviewDto>> getMedias() {
-        return ResponseEntity.ok(mediaService.getMedias().stream()
-                .map(mediaMapper::toDto)
-                .toList()
-        );
+    public ResponseEntity<List<MediaPreviewResponse>> getMedias() {
+        return ResponseEntity.ok(mediaService.getMedias());
     }
 
     @GetMapping("/list/{type}")
-    public ResponseEntity<List<MediaPreviewDto>> getMediasByType(
+    public ResponseEntity<List<MediaPreviewResponse>> getMediasByType(
             @PathVariable MediaType type,
             @RequestParam(required = false) List<Genre> genres) {
-        List<Media> medias;
 
-        if (genres == null || genres.isEmpty()) {
-            medias = mediaService.getMediasByType(type);
-        } else {
-            medias = mediaService.getMediasByTypeAndGenres(type, genres);
-        }
+        List<MediaPreviewResponse> medias = (genres == null || genres.isEmpty())
+                ? mediaService.getMediasByType(type)
+                : mediaService.getMediasByTypeAndGenres(type, genres);
 
-        return ResponseEntity.ok(
-                medias.stream()
-                        .map(mediaMapper::toDto)
-                        .toList());
+        return ResponseEntity.ok(medias);
     }
 
-    @GetMapping("/random")
-    public ResponseEntity<MediaPreviewDto> getRandomMedia() {
-        return ResponseEntity.ok(
-                mediaMapper.toDto(mediaService.getRandomMovie())
-        );
-    }
-
-    @GetMapping("/search/{title}")
-    public ResponseEntity<List<MediaPreviewDto>> searchResults(@PathVariable String title) {
+    @GetMapping("/search")
+    public ResponseEntity<List<MediaPreviewResponse>> searchResults(@RequestParam String title) {
         String decodedTitle = URLDecoder.decode(title, StandardCharsets.UTF_8);
-
-        return ResponseEntity.ok(mediaService.searchMedia(decodedTitle).stream()
-                .map(mediaMapper::toDto)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(mediaService.searchMedia(decodedTitle));
     }
 
     @PreAuthorize("hasRole('MEMBER')")
     @PostMapping("/{name}/ratings")
-    public ResponseEntity<?> rateMedia(@PathVariable String name, @RequestBody RatingRequest request) {
-        mediaService.rateMedia(name, request);
+    public ResponseEntity<?> rateMedia(@PathVariable String name, @RequestBody RatingRequest request, Authentication authentication) {
+        UUID authorId = UUID.fromString(authentication.getName());
+        mediaService.rateMedia(name, authorId, request);
         return ResponseEntity.ok("rated");
     }
 
