@@ -80,7 +80,7 @@ public class MediaService {
                 .userId(authorId)
                 .build();
 
-        media.getRating().add(rating);
+        media.getRatings().add(rating);
         mediaRepository.save(media);
     }
 
@@ -93,7 +93,7 @@ public class MediaService {
 
         Integer userRating = userId == null
                 ? null
-                : ratingRepository.findByMedia_IdAndUserId(media.getId(), userId)
+                : ratingRepository.findByMediaIdAndUserId(media.getId(), userId)
                 .map(Rating::getValue)
                 .orElse(null);
 

@@ -10,7 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
-    Optional<Rating> findByMedia_IdAndUserId(Long mediaId, UUID userId);
+    @Query("SELECT r FROM Rating r WHERE r.media.id = :mediaId AND r.userId = :userId")
+    Optional<Rating> findByMediaIdAndUserId(@Param("mediaId") Long mediaId, @Param("userId") UUID userId);
 
     @Query("SELECT AVG(r.value) FROM Rating r WHERE r.media.id = :mediaId")
     Double findAverageRatingByMediaId(@Param("mediaId") Long mediaId);
