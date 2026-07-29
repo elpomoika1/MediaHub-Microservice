@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.AuthenticationService.application.dto.UserDto;
 import me.elpomoika.AuthenticationService.application.dto.auth.ChangeEmailRequest;
 import me.elpomoika.AuthenticationService.domain.entities.User;
-import me.elpomoika.AuthenticationService.domain.exception.UserNotFoundException;
-import me.elpomoika.AuthenticationService.domain.repository.UserRepository;
-import me.elpomoika.AuthenticationService.infrastructure.persistence.jpa.JpaUserRepository;
-import me.elpomoika.AuthenticationService.infrastructure.persistence.repository.UserRepositoryImpl;
-import me.elpomoika.AuthenticationService.infrastructure.producer.event.UserChangeEmailEvent;
-import me.elpomoika.AuthenticationService.infrastructure.producer.outbox.OutboxService;
+import me.elpomoika.AuthenticationService.infrastructure.persistence.repository.UserRepositoryAdapter;
+import me.elpomoika.AuthenticationService.domain.event.UserChangeEmailEvent;
+import me.elpomoika.AuthenticationService.infrastructure.outbox.OutboxService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,7 +14,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ChangeEmailUseCase {
-    private final UserRepositoryImpl userRepository;
+    private final UserRepositoryAdapter userRepository;
     private final OutboxService outboxService;
 
     public UserDto execute(ChangeEmailRequest request, UUID userId) {

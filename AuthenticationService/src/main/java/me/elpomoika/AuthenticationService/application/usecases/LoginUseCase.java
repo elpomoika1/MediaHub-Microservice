@@ -5,7 +5,7 @@ import me.elpomoika.AuthenticationService.application.dto.auth.AuthResponse;
 import me.elpomoika.AuthenticationService.application.dto.auth.LoginRequest;
 import me.elpomoika.AuthenticationService.domain.entities.RefreshToken;
 import me.elpomoika.AuthenticationService.domain.entities.User;
-import me.elpomoika.AuthenticationService.infrastructure.persistence.repository.UserRepositoryImpl;
+import me.elpomoika.AuthenticationService.infrastructure.persistence.repository.UserRepositoryAdapter;
 import me.elpomoika.AuthenticationService.infrastructure.security.jwt.JwtService;
 import me.elpomoika.AuthenticationService.infrastructure.security.jwt.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +18,7 @@ public class LoginUseCase {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
-    private final UserRepositoryImpl userRepository;
+    private final UserRepositoryAdapter userRepository;
 
     public AuthResponse execute(LoginRequest request) {
         authenticationManager.authenticate(

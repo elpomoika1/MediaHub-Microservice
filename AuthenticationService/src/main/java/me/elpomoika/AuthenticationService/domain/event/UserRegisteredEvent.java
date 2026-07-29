@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.infrastructure.producer.event;
+package me.elpomoika.AuthenticationService.domain.event;
 
 import lombok.Builder;
 import lombok.Value;

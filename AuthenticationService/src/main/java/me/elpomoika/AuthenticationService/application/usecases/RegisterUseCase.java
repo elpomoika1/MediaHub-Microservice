@@ -8,8 +8,8 @@ import me.elpomoika.AuthenticationService.domain.entities.User;
 import me.elpomoika.AuthenticationService.domain.enums.Role;
 import me.elpomoika.AuthenticationService.domain.exception.UserExistsException;
 import me.elpomoika.AuthenticationService.domain.repository.UserRepository;
-import me.elpomoika.AuthenticationService.infrastructure.producer.event.UserRegisteredEvent;
-import me.elpomoika.AuthenticationService.infrastructure.producer.outbox.OutboxService;
+import me.elpomoika.AuthenticationService.domain.event.UserRegisteredEvent;
+import me.elpomoika.AuthenticationService.infrastructure.outbox.OutboxService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
