@@ -1,7 +1,8 @@
-package me.elpomoika.AuthenticationService.infrastructure.producer.outbox;
+package me.elpomoika.AuthenticationService.infrastructure.messaging.kafka;
 
 import lombok.RequiredArgsConstructor;
 import me.elpomoika.AuthenticationService.domain.entities.OutboxEvent;
+import me.elpomoika.AuthenticationService.infrastructure.outbox.OutboxPublisher;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Service
-public class KafkaOutboxPublisher implements OutboxPublisher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaOutboxPublisher.class);
+public class KafkaEventPublisher implements OutboxPublisher {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaEventPublisher.class);
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 

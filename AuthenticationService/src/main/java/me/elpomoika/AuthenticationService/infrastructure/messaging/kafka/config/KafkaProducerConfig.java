@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.infrastructure.producer.config;
+package me.elpomoika.AuthenticationService.infrastructure.messaging.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

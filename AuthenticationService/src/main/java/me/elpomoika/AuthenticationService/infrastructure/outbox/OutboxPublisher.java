@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.infrastructure.producer.outbox;
+package me.elpomoika.AuthenticationService.infrastructure.outbox;
 
 import me.elpomoika.AuthenticationService.domain.entities.OutboxEvent;
 

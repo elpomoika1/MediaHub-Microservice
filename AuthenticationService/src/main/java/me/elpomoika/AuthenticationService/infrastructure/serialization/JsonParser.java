@@ -1,4 +1,4 @@
-package me.elpomoika.AuthenticationService.util;
+package me.elpomoika.AuthenticationService.infrastructure.serialization;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

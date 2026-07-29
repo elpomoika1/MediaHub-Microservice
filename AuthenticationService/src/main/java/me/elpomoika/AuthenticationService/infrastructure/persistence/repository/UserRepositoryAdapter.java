@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryAdapter implements UserRepository {
     private final JpaUserRepository jpaUserRepository;
     @Override
     public User save(User user) {
