@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import me.elpomoika.MediaService.domain.entity.Comment;
 import me.elpomoika.MediaService.domain.entity.CommentVote;
 import me.elpomoika.MediaService.domain.entity.Media;
-import me.elpomoika.MediaService.dto.comment.VoteType;
-import me.elpomoika.MediaService.dto.media.CommentRequest;
-import me.elpomoika.MediaService.repository.CommentRepository;
+import me.elpomoika.MediaService.application.dto.comment.VoteType;
+import me.elpomoika.MediaService.application.dto.comment.CommentRequest;
+import me.elpomoika.MediaService.infrastructure.jpa.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

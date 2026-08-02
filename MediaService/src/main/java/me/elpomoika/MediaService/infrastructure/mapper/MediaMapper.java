@@ -1,9 +1,8 @@
 package me.elpomoika.MediaService.mapper;
 
-import me.elpomoika.MediaService.dto.media.MediaPreviewResponse;
+import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.domain.entity.Media;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.Mapping;
 
 @Service
 public class MediaMapper {
