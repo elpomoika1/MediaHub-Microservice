@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.service;
+package me.elpomoika.MediaService.infrastructure.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

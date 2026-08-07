@@ -1,16 +1,15 @@
-package me.elpomoika.MediaService.controller;
+package me.elpomoika.MediaService.presentation.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
-import me.elpomoika.MediaService.dto.comment.CommentVoteRequest;
-import me.elpomoika.MediaService.dto.media.CommentRequest;
-import me.elpomoika.MediaService.dto.media.MediaPreviewResponse;
-import me.elpomoika.MediaService.dto.media.MediaRequest;
-import me.elpomoika.MediaService.dto.media.RatingRequest;
-import me.elpomoika.MediaService.mapper.MediaMapper;
-import me.elpomoika.MediaService.service.CommentService;
-import me.elpomoika.MediaService.service.MediaService;
+import me.elpomoika.MediaService.application.dto.comment.CommentVoteRequest;
+import me.elpomoika.MediaService.application.dto.comment.CommentRequest;
+import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
+import me.elpomoika.MediaService.application.dto.media.MediaRequest;
+import me.elpomoika.MediaService.application.dto.media.RatingRequest;
+import me.elpomoika.MediaService.infrastructure.service.CommentService;
+import me.elpomoika.MediaService.infrastructure.service.MediaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -29,7 +28,6 @@ import java.util.UUID;
 public class MediaController {
     private final MediaService mediaService;
     private final CommentService commentService;
-    private final MediaMapper mediaMapper;
 
     @PostMapping("/upload")
     public ResponseEntity<?> upload(

@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.configuration;
+package me.elpomoika.MediaService.application.configuration;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Bean;

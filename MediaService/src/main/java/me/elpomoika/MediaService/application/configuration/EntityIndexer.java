@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.configuration;
+package me.elpomoika.MediaService.application.configuration;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

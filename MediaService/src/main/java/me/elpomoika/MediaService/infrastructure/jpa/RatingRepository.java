@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.repository;
+package me.elpomoika.MediaService.infrastructure.jpa;
 
 import me.elpomoika.MediaService.domain.entity.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;

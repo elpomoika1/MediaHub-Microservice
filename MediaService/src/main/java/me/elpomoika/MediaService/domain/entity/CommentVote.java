@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.elpomoika.MediaService.dto.comment.VoteType;
+import me.elpomoika.MediaService.application.dto.comment.VoteType;
 
 import java.util.UUID;
 

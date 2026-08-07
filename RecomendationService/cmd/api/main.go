@@ -1,16 +1,17 @@
 package main
 
 import (
-	"elpomoika/mediahub/v2/internal/app"
-	"log"
+	"github.com/elpomoika/mediahub/recommendation/internal/app"
 )
 
 func main() {
 	app, err := app.New()
 	if err != nil {
-		log.Fatal(err)
-		return
+		panic(err)
 	}
+	defer app.Close()
 
-	app.Run()
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
 }

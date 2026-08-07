@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.repository;
+package me.elpomoika.MediaService.infrastructure.jpa;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

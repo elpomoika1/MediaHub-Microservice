@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.infrastructure.jpa.security;
+package me.elpomoika.MediaService.infrastructure.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

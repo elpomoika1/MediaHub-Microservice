@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.dto.comment;
+package me.elpomoika.MediaService.application.dto.comment;
 
 public enum VoteType {
     LIKE,

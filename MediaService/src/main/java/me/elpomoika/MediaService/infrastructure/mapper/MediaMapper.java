@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.mapper;
+package me.elpomoika.MediaService.infrastructure.mapper;
 
 import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.domain.entity.Media;

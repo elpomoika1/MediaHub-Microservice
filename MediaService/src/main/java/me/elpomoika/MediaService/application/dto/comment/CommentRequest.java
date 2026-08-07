@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.dto.media;
+package me.elpomoika.MediaService.application.dto.comment;
 
 import java.time.Instant;
 

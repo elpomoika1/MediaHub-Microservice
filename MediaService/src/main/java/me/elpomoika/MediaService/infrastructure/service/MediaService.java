@@ -1,4 +1,4 @@
-package me.elpomoika.MediaService.service;
+package me.elpomoika.MediaService.infrastructure.service;
 
 import lombok.RequiredArgsConstructor;
 import me.elpomoika.MediaService.domain.entity.Episode;
@@ -8,10 +8,12 @@ import me.elpomoika.MediaService.domain.entity.Rating;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
 import me.elpomoika.MediaService.application.dto.media.EpisodeRequest;
+import me.elpomoika.MediaService.application.dto.media.GenreRequest;
 import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.application.dto.media.MediaRequest;
 import me.elpomoika.MediaService.application.dto.media.RatingRequest;
-import me.elpomoika.MediaService.mapper.MediaMapper;
+import me.elpomoika.MediaService.infrastructure.mapper.MediaMapper;
+import me.elpomoika.MediaService.infrastructure.jpa.GenreRepository;
 import me.elpomoika.MediaService.infrastructure.jpa.MediaRepository;
 import me.elpomoika.MediaService.infrastructure.jpa.RatingRepository;
 import me.elpomoika.MediaService.util.SlugGenerator;
@@ -30,6 +32,7 @@ public class MediaService {
     private final MediaRepository mediaRepository;
     private final RatingRepository ratingRepository;
     private final S3FileStorageService s3StorageService;
+    private final GenreRepository genreRepository;
     private final MediaMapper mediaMapper;
 
     public void saveMovie(MultipartFile file, MediaRequest request) throws IOException {
@@ -38,7 +41,7 @@ public class MediaService {
                 .title(title)
                 .episodesCount(request.episodesCount())
                 .type(request.type())
-                .genres(request.genres())
+                .genres(getGenres(request.genres()))
                 .build();
 
         EpisodeRequest epReq = request.episodeRequest();
@@ -142,6 +145,19 @@ public class MediaService {
                 .map(media -> mediaMapper.toPreview(
                         media,
                         avgRatings.getOrDefault(media.getId(), 0.0)))
+                .toList();
+    }
+
+    public List<Genre> getGenres(List<GenreRequest> requests) {
+        return requests.stream()
+                .map(request ->
+                        genreRepository.findByNameIgnoreCase(request.name())
+                            .orElseThrow(
+                                () -> new RuntimeException(
+                                    "Genre not found"
+                                )
+                            )
+                )
                 .toList();
     }
 }

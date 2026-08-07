@@ -1,4 +1,5 @@
 package me.elpomoika.MediaService.application.dto.media;
 
-public record RatingRequest(int rating) {
+public record GenreRequest(String name) {
+    
 }

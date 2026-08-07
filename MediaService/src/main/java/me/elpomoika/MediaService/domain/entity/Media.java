@@ -28,9 +28,14 @@ public class Media {
     @Enumerated(EnumType.STRING)
     private MediaType type;
 
-    @ElementCollection(targetClass = Genre.class)
-    @Enumerated(EnumType.STRING)
-    private List<Genre> genres;
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+        name = "media_genres",
+        joinColumns = @JoinColumn(name = "media_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    @Builder.Default
+    private List<Genre> genres = new ArrayList<>();
 
     @Column(length = 2048)
     private String imageUrl;
