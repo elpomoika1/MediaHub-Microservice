@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'idea'
+	id("com.google.protobuf") version "0.9.5"
 }
 
 group = 'me.elpomoika'
@@ -46,12 +48,36 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'software.amazon.awssdk:s3:2.42.17'
 
+	implementation 'org.springframework.grpc:spring-grpc-spring-boot-starter:0.8.0'
+	implementation 'io.grpc:grpc-services:1.72.0'
+
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:4.31.1"
+	}
+
+	plugins {
+		grpc {
+			artifact = "io.grpc:protoc-gen-grpc-java:1.72.0"
+		}
+	}
+
+	generateProtoTasks {
+		all().each { task ->
+			task.plugins {
+				grpc {}
+			}
+		}
+	}
 }
 
 tasks.named('test') {

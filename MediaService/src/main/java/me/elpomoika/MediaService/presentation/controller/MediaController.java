@@ -61,8 +61,9 @@ public class MediaController {
     }
 
     @GetMapping("/media/{slug}")
-    public ResponseEntity<MediaResponse> getMedia(@PathVariable String slug) {
-        return ResponseEntity.ok(mediaService.getMediaDetails(slug));
+    public ResponseEntity<MediaResponse> getMedia(@PathVariable String slug, Authentication authentication) {
+        UUID userId = UUID.fromString(authentication.getName());
+        return ResponseEntity.ok(mediaService.getMediaDetails(slug, userId));
     }
 
     @GetMapping("/search")

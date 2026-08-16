@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package media;
+
+option java_package = "me.elpomoika.MediaService.infrastructure.grpc";
+option java_multiple_files = true;
+
+message GetSimilarMoviesRequest {
+  int64 movie_id = 1;
+  repeated int64 genre_ids = 2;
+}
+
+// отдаем только id найденного медиа
+message SimilarMovie {
+  int64 movie_id = 1;
+}
+
+message GetSimilarMoviesResponse {
+  repeated SimilarMovie movies = 1;
+}
+
+message AddMovieRequest {
+  int64 movie_id = 1;
+  repeated int64 genre_ids = 2;
+}
+
+message AddMovieResponse {
+  bool success = 1;
+}
+
+service RecommendationService {
+  rpc GetSimilarMovies(GetSimilarMoviesRequest) returns (GetSimilarMoviesResponse);
+
+  rpc AddMovie(AddMovieRequest) returns (AddMovieResponse);
+}

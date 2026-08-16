@@ -16,6 +16,8 @@ import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.application.dto.media.MediaRequest;
 import me.elpomoika.MediaService.application.dto.media.MediaResponse;
 import me.elpomoika.MediaService.application.dto.media.RatingRequest;
+import me.elpomoika.MediaService.infrastructure.grpc.AddMovieRequest;
+import me.elpomoika.MediaService.infrastructure.grpc.RecommendationServiceGrpc;
 import me.elpomoika.MediaService.infrastructure.mapper.CommentMapper;
 import me.elpomoika.MediaService.infrastructure.mapper.EpisodeMapper;
 import me.elpomoika.MediaService.infrastructure.mapper.MediaMapper;
@@ -43,6 +45,8 @@ public class MediaService {
     private final MediaMapper mediaMapper;
     private final CommentMapper commentMapper;
     private final EpisodeMapper episodeMapper;
+
+    private final RecommendationServiceGrpc.RecommendationServiceBlockingStub stub;
 
     public void saveMovie(MultipartFile file, MediaRequest request) throws IOException {
         // todo create grpc request to save
@@ -78,6 +82,15 @@ public class MediaService {
         media.setName(slug);
         media.setImageUrl(imageUrl);
 
+        AddMovieRequest grpcRequest = AddMovieRequest.newBuilder()
+                        .addGenreIds(media.getId())
+                .addAllGenreIds(media.getGenres().stream()
+                        .map(Genre::getId)
+                        .collect(Collectors.toList()))
+                .build();
+
+        //todo handle succecss
+        stub.addMovie(grpcRequest);
         mediaRepository.save(media);
     }
 
