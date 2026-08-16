@@ -20,7 +20,7 @@ public class CommentService {
     private final CommentRepository repository;
 
     public void leaveComment(UUID authorId, String mediaName, CommentRequest request) {
-        Media media = mediaService.getMedia(mediaName);
+        Media media = mediaService.getMediaEntity(mediaName);
         if (media == null) return;
 
         Comment parent = null;

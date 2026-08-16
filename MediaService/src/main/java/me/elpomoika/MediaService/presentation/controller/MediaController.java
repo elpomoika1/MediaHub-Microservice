@@ -7,6 +7,7 @@ import me.elpomoika.MediaService.application.dto.comment.CommentVoteRequest;
 import me.elpomoika.MediaService.application.dto.comment.CommentRequest;
 import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.application.dto.media.MediaRequest;
+import me.elpomoika.MediaService.application.dto.media.MediaResponse;
 import me.elpomoika.MediaService.application.dto.media.RatingRequest;
 import me.elpomoika.MediaService.infrastructure.service.CommentService;
 import me.elpomoika.MediaService.infrastructure.service.MediaService;
@@ -37,14 +38,6 @@ public class MediaController {
         return ResponseEntity.ok("Uploaded");
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<MediaPreviewResponse> getMedia(@RequestParam String name, Authentication authentication) {
-        UUID userId = authentication != null ? UUID.fromString(authentication.getName()) : null;
-        return ResponseEntity.ok(
-                mediaService.getMediaBySlug(name, userId)
-        );
-    }
-
     @GetMapping("/test")
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("all is good boy");
@@ -65,6 +58,11 @@ public class MediaController {
                 : mediaService.getMediasByTypeAndGenres(type, genres);
 
         return ResponseEntity.ok(medias);
+    }
+
+    @GetMapping("/media/{slug}")
+    public ResponseEntity<MediaResponse> getMedia(@PathVariable String slug) {
+        return ResponseEntity.ok(mediaService.getMediaDetails(slug));
     }
 
     @GetMapping("/search")

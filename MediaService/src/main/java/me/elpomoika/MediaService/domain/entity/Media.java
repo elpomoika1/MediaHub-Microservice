@@ -46,8 +46,10 @@ public class Media {
     private List<Episode> episodes = new ArrayList<>();
 
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Rating> ratings = new ArrayList<>();
 
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 }

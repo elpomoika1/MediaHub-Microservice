@@ -7,12 +7,19 @@ import me.elpomoika.MediaService.domain.entity.PlayerSource;
 import me.elpomoika.MediaService.domain.entity.Rating;
 import me.elpomoika.MediaService.domain.enums.Genre;
 import me.elpomoika.MediaService.domain.enums.MediaType;
+import me.elpomoika.MediaService.application.dto.PlayerSourceResponse;
+import me.elpomoika.MediaService.application.dto.comment.CommentResponse;
 import me.elpomoika.MediaService.application.dto.media.EpisodeRequest;
+import me.elpomoika.MediaService.application.dto.media.EpisodeResponse;
 import me.elpomoika.MediaService.application.dto.media.GenreRequest;
 import me.elpomoika.MediaService.application.dto.media.MediaPreviewResponse;
 import me.elpomoika.MediaService.application.dto.media.MediaRequest;
+import me.elpomoika.MediaService.application.dto.media.MediaResponse;
 import me.elpomoika.MediaService.application.dto.media.RatingRequest;
+import me.elpomoika.MediaService.infrastructure.mapper.CommentMapper;
+import me.elpomoika.MediaService.infrastructure.mapper.EpisodeMapper;
 import me.elpomoika.MediaService.infrastructure.mapper.MediaMapper;
+import me.elpomoika.MediaService.infrastructure.mapper.PlayerSourceMapper;
 import me.elpomoika.MediaService.infrastructure.jpa.GenreRepository;
 import me.elpomoika.MediaService.infrastructure.jpa.MediaRepository;
 import me.elpomoika.MediaService.infrastructure.jpa.RatingRepository;
@@ -34,8 +41,11 @@ public class MediaService {
     private final S3FileStorageService s3StorageService;
     private final GenreRepository genreRepository;
     private final MediaMapper mediaMapper;
+    private final CommentMapper commentMapper;
+    private final EpisodeMapper episodeMapper;
 
     public void saveMovie(MultipartFile file, MediaRequest request) throws IOException {
+        // todo create grpc request to save
         String title = request.title();
         Media media = Media.builder()
                 .title(title)
@@ -91,27 +101,6 @@ public class MediaService {
         return toPreviewList(mediaRepository.searchMedia(title));
     }
 
-    public MediaPreviewResponse getMediaBySlug(String slug, UUID userId) {
-        Media media = mediaRepository.findByName(slug);
-
-        Integer userRating = userId == null
-                ? null
-                : ratingRepository.findByMediaIdAndUserId(media.getId(), userId)
-                .map(Rating::getValue)
-                .orElse(null);
-
-        Double averageRating = ratingRepository.findAverageRatingByMediaId(media.getId());
-
-        return MediaPreviewResponse.builder()
-                .name(media.getName())
-                .title(media.getTitle())
-                .imageUrl(media.getImageUrl())
-                .episodesCount(media.getEpisodesCount())
-                .averageRating(averageRating)
-                .userRating(userRating)
-                .build();
-    }
-
     public List<MediaPreviewResponse> getMedias() {
         return toPreviewList(mediaRepository.findAll());
     }
@@ -120,8 +109,32 @@ public class MediaService {
         return toPreviewList(mediaRepository.findDistinctByTypeAndGenresIn(type, genres));
     }
 
-    public Media getMedia(String slug) {
+    public Media getMediaEntity(String slug) {
         return mediaRepository.findByName(slug);
+    }
+
+    public MediaResponse getMediaDetails(String slug, UUID userId) {
+        Media media = getMediaEntity(slug);
+
+        // todo handle userId == null
+        // todo grpc client
+        Rating userRating = ratingRepository.findByMediaIdAndUserId(media.getId(), userId).get();
+        Double avgRating = ratingRepository.findAverageRatingByMediaId(media.getId());
+        List<CommentResponse> comments = commentMapper.toResponse(media.getComments());
+        List<EpisodeResponse> episodes = episodeMapper.toResponse(media.getEpisodes());
+
+        return new MediaResponse(
+            media.getName(),
+            media.getTitle(),
+            media.getEpisodesCount(),
+            userRating.getValue(),
+            media.getType(),
+            media.getImageUrl(),
+            avgRating,
+            comments,
+            episodes,
+            List.of()
+        );
     }
 
     public List<MediaPreviewResponse> getMediasByType(MediaType type) {
@@ -134,12 +147,7 @@ public class MediaService {
         }
 
         List<Long> ids = mediaList.stream().map(Media::getId).toList();
-
-        Map<Long, Double> avgRatings = ratingRepository.findAverageRatingsByMediaIds(ids).stream()
-                .collect(Collectors.toMap(
-                        RatingRepository.MediaAverageRatingProjection::getMediaId,
-                        RatingRepository.MediaAverageRatingProjection::getAvg
-                ));
+        Map<Long, Double> avgRatings = getAvgRating(ids);
 
         return mediaList.stream()
                 .map(media -> mediaMapper.toPreview(
@@ -150,14 +158,20 @@ public class MediaService {
 
     public List<Genre> getGenres(List<GenreRequest> requests) {
         return requests.stream()
-                .map(request ->
-                        genreRepository.findByNameIgnoreCase(request.name())
-                            .orElseThrow(
-                                () -> new RuntimeException(
-                                    "Genre not found"
-                                )
+            .map(request ->
+                    genreRepository.findByNameIgnoreCase(request.name())
+                        .orElseThrow(
+                            () -> new RuntimeException(
+                                "Genre not found"
                             )
-                )
-                .toList();
+                        )).toList();
+    }
+
+    private Map<Long, Double> getAvgRating(List<Long> ids) {
+        return ratingRepository.findAverageRatingsByMediaIds(ids).stream()
+                .collect(Collectors.toMap(
+                        RatingRepository.MediaAverageRatingProjection::getMediaId,
+                        RatingRepository.MediaAverageRatingProjection::getAvg
+                ));
     }
 }
